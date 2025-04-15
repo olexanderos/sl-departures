@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Framework & Tech Stack
+  * 🧱 Framework: Next.js (latest stable version, app directory preferred)
+  * 🧠 Type System: TypeScript
+  * 🎨 Styling: Tailwind CSS
+  * 🧪 Testing: Jest (unit) + Cypress (e2e)
+  * 📡 API Communication: tRPC (preferred) or REST via Next.js API routes
+  * 🔒 Auth: NextAuth.js or Clerk (JWT-based if custom)
+

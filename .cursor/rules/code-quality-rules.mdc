@@ -1,0 +1,49 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Code Quality Rules
+
+## Naming Conventions
+- Use descriptive variable names that explain purpose
+- Avoid abbreviations except for common ones (e.g., `id`, `url`)
+- Use camelCase for variables and functions
+- Use PascalCase for components, classes, and interfaces
+- Use UPPERCASE for constants
+
+## Component Structure
+- Limit components to under 300 lines of code
+- Extract repeated logic into shared utilities
+- Keep component props simple and focused
+- Use proper TypeScript interfaces for props
+
+## Code Organization
+- Group related imports together
+- Order imports: external libraries first, then internal modules
+- Place helper functions before the main component
+- Structure function internals in a logical flow
+
+## Comments and Documentation
+- Document complex algorithms and business logic
+- Add JSDoc comments for public functions and interfaces
+- Keep comments updated when code changes
+- Use TODO comments for planned improvements with ticket numbers
+
+## Error Handling
+- Use try/catch blocks for async operations
+- Implement graceful degradation for failed network requests
+- Provide meaningful error messages to users
+- Log errors appropriately for debugging
+
+## Formatting
+- Use consistent indentation (2 spaces recommended)
+- Limit line length to 100 characters
+- Use trailing commas in multiline object and array literals
+- Add semicolons at the end of statements
+
+## Best Practices
+- Avoid magic numbers and strings
+- Use early returns to reduce nesting
+- Favor composition over inheritance
+- Avoid side effects in pure functions 

@@ -1,0 +1,48 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# API and Data Handling Rules
+
+## API Structure
+- Organize API calls by domain/feature
+- Create reusable API client with common configuration
+- Implement proper authentication token handling
+- Use environment variables for API endpoints
+
+## Data Fetching
+- Implement proper loading states for all data fetching
+- Handle error states consistently
+- Add retry logic for critical operations
+- Use proper caching strategies when appropriate
+
+## Data Transformation
+- Transform API responses into application models
+- Keep transformation logic separate from UI components
+- Use TypeScript interfaces for data models
+- Implement proper validation for API responses
+
+## State Management
+- Keep server state separate from UI state
+- Consider using React Query or SWR for data fetching
+- Implement optimistic updates for better UX
+- Use proper data normalization for complex data structures
+
+## Error Handling
+- Create standardized error handling for API responses
+- Implement graceful degradation for failed requests
+- Log API errors with relevant context
+- Provide user-friendly error messages
+
+## Performance
+- Implement request cancellation for abandoned requests
+- Use pagination for large data sets
+- Implement debouncing for search inputs
+- Consider batch requests for multiple related data needs
+
+## Security
+- Don't expose sensitive data in client-side code
+- Validate all user inputs before sending to API
+- Implement proper CSRF protection
+- Follow the principle of least privilege 
