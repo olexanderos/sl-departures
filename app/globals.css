@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Google Icons */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+/* Custom styling for specific components */
+.departure-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.departure-card:hover {
+  transform: translateY(-2px);
+} 
