@@ -21,6 +21,7 @@ export default function RootLayout({
       <head>
         <title>Departures | Live Transport Information</title>
         <meta name="description" content="Check real-time train and bus departures" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
       </head>
       <body className={inter.className}>
         <QueryClientProvider client={queryClient}>
