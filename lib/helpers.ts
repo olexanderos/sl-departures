@@ -15,11 +15,11 @@ export const formatDepartureTime = (departure: Departure): string => {
 export const getTransportIcon = (transportMode: string): string => {
   switch (transportMode.toUpperCase()) {
     case TRANSPORT_MODES.METRO:
-      return 'subway';
+      return 'train';  // More specific icon for metro
     case TRANSPORT_MODES.BUS:
       return 'directions_bus';
     case TRANSPORT_MODES.TRAIN:
-      return 'train';
+      return 'railway_alert';  // Different train icon
     case TRANSPORT_MODES.TRAM:
       return 'tram';
     case TRANSPORT_MODES.SHIP:

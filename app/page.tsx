@@ -34,7 +34,7 @@ export default function Home() {
         </p>
       </div>
 
-      <DisruptionAlert disruptions={disruptions} />
+      <DisruptionAlert departures={departures} disruptions={disruptions} />
 
       <div className="bg-dark-bg-secondary rounded-lg shadow-md p-4 mb-6 border border-dark-border">
         <div className="mb-4">

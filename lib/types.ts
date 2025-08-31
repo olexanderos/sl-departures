@@ -27,15 +27,23 @@ export interface Departure {
     transport_mode: string;
     group_of_lines: string;
   };
-  deviations: any[];
+  deviations: Deviation[];
+}
+
+export interface Deviation {
+  importance_level: number;
+  consequence: string;
+  message: string;
 }
 
 export interface ApiResponse {
   departures: Departure[];
-  stop_deviations: any[];
+  stop_deviations: Deviation[];
 }
 
 export type TransportMode = 'METRO' | 'BUS' | 'TRAIN' | 'TRAM' | 'SHIP' | 'OTHER';
+
+export type DeviationConsequence = 'INFORMATION' | 'CANCELLED' | 'DELAYED' | 'OTHER';
 
 export type SortOption = 'time' | 'line' | 'transport';
 
