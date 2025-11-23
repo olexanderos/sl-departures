@@ -21,6 +21,24 @@ export const DepartureList: React.FC<DepartureListProps> = ({
   sortConfig,
   onSort,
 }) => {
+  const groupedDepartures = useMemo(() => {
+    if (sortConfig.option !== 'transport') {
+      return null;
+    }
+
+    const groups: Record<string, Departure[]> = {};
+
+    departures.forEach(departure => {
+      const mode = departure.line.transport_mode.toUpperCase();
+      if (!groups[mode]) {
+        groups[mode] = [];
+      }
+      groups[mode].push(departure);
+    });
+
+    return groups;
+  }, [departures, sortConfig.option]);
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -42,25 +60,6 @@ export const DepartureList: React.FC<DepartureListProps> = ({
     );
   }
   
-  // Group departures by transport mode if sorting by transport
-  const groupedDepartures = useMemo(() => {
-    if (sortConfig.option === 'transport') {
-      const groups: Record<string, Departure[]> = {};
-      
-      departures.forEach(departure => {
-        const mode = departure.line.transport_mode.toUpperCase();
-        if (!groups[mode]) {
-          groups[mode] = [];
-        }
-        groups[mode].push(departure);
-      });
-      
-      return groups;
-    }
-    
-    return null;
-  }, [departures, sortConfig.option]);
-
   return (
     <div>
       <div className="flex justify-end mb-4">

@@ -27,6 +27,8 @@ export const TRANSPORT_LABELS = {
   [TRANSPORT_MODES.OTHER]: 'Other',
 };
 
+const DEFAULT_DEPARTURES_API = 'https://transport.integration.sl.se/v1/sites/9104/departures';
+
 export const API_ENDPOINTS = {
-  DEPARTURES: '/api/departures',
+  DEPARTURES: process.env.NEXT_PUBLIC_DEPARTURES_API || DEFAULT_DEPARTURES_API,
 }; 

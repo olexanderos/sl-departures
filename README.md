@@ -8,15 +8,12 @@ A modern single-page web application to display train and bus departures and pot
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **State Management**: React Query for server state + Context API for app state
-- **API Communication**: REST via Next.js API routes
+- **API Communication**: REST calls directly to the SL public transport API
 
 ## Project Structure
 ```
 departures/
 ├── app/
-│   ├── api/
-│   │   └── departures/
-│   │       └── route.ts     # API route to fetch departures
 │   ├── favicon.ico
 │   ├── globals.css
 │   ├── layout.tsx
@@ -51,6 +48,9 @@ departures/
 │   └── tailwind.css         # Custom Tailwind styles
 ├── public/
 │   └── icons/               # Transport icons
+├── .github/
+│   └── workflows/
+│       └── deploy.yml       # GitHub Pages pipeline
 ├── next.config.js
 ├── package.json
 ├── tailwind.config.js
@@ -65,14 +65,12 @@ departures/
 
 2. **Auto-Refresh Functionality**
    - Refresh data automatically every 60 seconds
-   - Visual countdown timer showing time until next refresh
 
 3. **Sorting**
    - Sort by transport type (metro, bus), direction, departure time
 
 4. **Disruption Alerts**
    - Prominent display of any service disruptions
-   - Details view for disruption information
 
 5. **Responsive Design**
    - Mobile-first approach
@@ -127,7 +125,7 @@ interface ApiResponse {
 4. Define TypeScript interfaces based on API response
 
 ### Phase 2: Data Fetching
-1. Implement API route for departures data
+1. Connect to the SL departures endpoint with React Query
 2. Create useDepartures hook with React Query
 3. Implement auto-refresh functionality (useRefreshTimer hook)
 4. Add error handling for API failures
@@ -149,13 +147,19 @@ interface ApiResponse {
 5. Add unit tests for critical components
 
 ## Deployment Strategy
-1. Set up CI/CD pipeline
-2. Configure environment variables for production
-3. Implement caching strategy for API responses
-4. Deploy to Vercel or similar platform
+1. Build a fully static bundle with `npm run build:static`
+2. Deploy `out/` to GitHub Pages via `.github/workflows/deploy.yml`
+3. Provide `NEXT_PUBLIC_BASE_PATH` (e.g. `/sl-departures`) and `NEXT_PUBLIC_DEPARTURES_API` during builds (copy `.env.example` if needed)
+4. Use GitHub Pages environments for preview + production URLs
 
 ## Future Enhancements
 - Geolocation to show nearest stations
 - Dark/light theme toggle
 - Push notifications for service disruptions
 - Additional transport information (platform changes, etc.) 
+
+## Continuous Deployment (GitHub Pages)
+- Push to `main` to trigger `.github/workflows/deploy.yml`
+- Workflow installs deps, lints, and runs `npm run build:static`
+- `NEXT_PUBLIC_BASE_PATH` ensures assets resolve under `/sl-departures`
+- Artifact in `out/` uploads to GitHub Pages with `.nojekyll` to keep Next.js paths intact
