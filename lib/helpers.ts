@@ -75,4 +75,21 @@ export const filterByDirection = (departures: Departure[], direction?: string): 
   return departures.filter(departure => 
     departure.direction.includes(direction) || departure.destination.includes(direction)
   );
+};
+
+/**
+ * Groups departures by direction_code (1 or 2)
+ */
+export const groupByDirectionCode = (departures: Departure[]): {
+  direction1: Departure[];
+  direction2: Departure[];
+} => {
+  return departures.reduce((acc, departure) => {
+    if (departure.direction_code === 1) {
+      acc.direction1.push(departure);
+    } else if (departure.direction_code === 2) {
+      acc.direction2.push(departure);
+    }
+    return acc;
+  }, { direction1: [] as Departure[], direction2: [] as Departure[] });
 }; 

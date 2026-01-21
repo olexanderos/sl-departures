@@ -2,9 +2,9 @@
 
 import React, { useMemo } from 'react';
 import { Departure, SortConfig } from '@/lib/types';
-import { DepartureCard } from './DepartureCard';
+import { DirectionColumn } from './DirectionColumn';
 import { LoadingSpinner } from '../common/LoadingSpinner';
-import { TRANSPORT_LABELS, TRANSPORT_MODES } from '@/lib/constants';
+import { groupByDirectionCode } from '@/lib/helpers';
 
 interface DepartureListProps {
   departures: Departure[];
@@ -21,14 +21,19 @@ export const DepartureList: React.FC<DepartureListProps> = ({
   sortConfig,
   onSort,
 }) => {
-  const groupedDepartures = useMemo(() => {
+  // Split departures by direction_code
+  const { direction1, direction2 } = useMemo(() => {
+    return groupByDirectionCode(departures);
+  }, [departures]);
+
+  // Group by transport mode if needed (for each direction separately)
+  const groupedDirection1 = useMemo(() => {
     if (sortConfig.option !== 'transport') {
       return null;
     }
 
     const groups: Record<string, Departure[]> = {};
-
-    departures.forEach(departure => {
+    direction1.forEach(departure => {
       const mode = departure.line.transport_mode.toUpperCase();
       if (!groups[mode]) {
         groups[mode] = [];
@@ -37,7 +42,24 @@ export const DepartureList: React.FC<DepartureListProps> = ({
     });
 
     return groups;
-  }, [departures, sortConfig.option]);
+  }, [direction1, sortConfig.option]);
+
+  const groupedDirection2 = useMemo(() => {
+    if (sortConfig.option !== 'transport') {
+      return null;
+    }
+
+    const groups: Record<string, Departure[]> = {};
+    direction2.forEach(departure => {
+      const mode = departure.line.transport_mode.toUpperCase();
+      if (!groups[mode]) {
+        groups[mode] = [];
+      }
+      groups[mode].push(departure);
+    });
+
+    return groups;
+  }, [direction2, sortConfig.option]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -59,18 +81,17 @@ export const DepartureList: React.FC<DepartureListProps> = ({
       </div>
     );
   }
-  
+
   return (
     <div>
       <div className="flex justify-end mb-4">
         <div className="flex text-sm border-b border-dark-border">
           <button
             onClick={() => onSort('time')}
-            className={`px-3 py-2 border-b-2 ${
-              sortConfig.option === 'time' 
-                ? 'border-primary text-primary' 
-                : 'border-transparent text-dark-text-secondary'
-            }`}
+            className={`px-3 py-2 border-b-2 ${sortConfig.option === 'time'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-dark-text-secondary'
+              }`}
           >
             Time {sortConfig.option === 'time' && (
               <span className="ml-1">
@@ -78,14 +99,13 @@ export const DepartureList: React.FC<DepartureListProps> = ({
               </span>
             )}
           </button>
-          
+
           <button
             onClick={() => onSort('line')}
-            className={`px-3 py-2 border-b-2 ${
-              sortConfig.option === 'line' 
-                ? 'border-primary text-primary' 
-                : 'border-transparent text-dark-text-secondary'
-            }`}
+            className={`px-3 py-2 border-b-2 ${sortConfig.option === 'line'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-dark-text-secondary'
+              }`}
           >
             Line {sortConfig.option === 'line' && (
               <span className="ml-1">
@@ -93,14 +113,13 @@ export const DepartureList: React.FC<DepartureListProps> = ({
               </span>
             )}
           </button>
-          
+
           <button
             onClick={() => onSort('transport')}
-            className={`px-3 py-2 border-b-2 ${
-              sortConfig.option === 'transport' 
-                ? 'border-primary text-primary' 
-                : 'border-transparent text-dark-text-secondary'
-            }`}
+            className={`px-3 py-2 border-b-2 ${sortConfig.option === 'transport'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-dark-text-secondary'
+              }`}
           >
             Type {sortConfig.option === 'transport' && (
               <span className="ml-1">
@@ -110,48 +129,18 @@ export const DepartureList: React.FC<DepartureListProps> = ({
           </button>
         </div>
       </div>
-      
-      {groupedDepartures ? (
-        // Render grouped by transport mode
-        <div className="space-y-6">
-          {Object.entries(groupedDepartures).map(([mode, groupDepartures]) => (
-            <div key={mode} className="space-y-3">
-              <div className={`py-2 px-3 rounded-md inline-block mb-2 ${
-                mode === TRANSPORT_MODES.METRO 
-                  ? 'bg-green-600/20 text-green-400'
-                  : mode === TRANSPORT_MODES.BUS 
-                    ? 'bg-blue-600/20 text-blue-400'
-                    : 'bg-dark-bg-secondary text-dark-text-secondary'
-              }`}>
-                <span className="material-icons align-middle mr-1 text-sm">
-                  {mode === TRANSPORT_MODES.METRO ? 'train' : 
-                   mode === TRANSPORT_MODES.BUS ? 'directions_bus' : 'directions_transit'}
-                </span>
-                <span className="font-medium">
-                  {TRANSPORT_LABELS[mode as keyof typeof TRANSPORT_LABELS] || mode}
-                </span>
-              </div>
-              
-              {groupDepartures.map((departure) => (
-                <DepartureCard 
-                  key={`${departure.journey.id}-${departure.line.designation}`} 
-                  departure={departure} 
-                />
-              ))}
-            </div>
-          ))}
-        </div>
-      ) : (
-        // Render regular list
-        <div className="space-y-3">
-          {departures.map((departure) => (
-            <DepartureCard 
-              key={`${departure.journey.id}-${departure.line.designation}`} 
-              departure={departure} 
-            />
-          ))}
-        </div>
-      )}
+
+      {/* Two-column layout: direction_code=2 on left/top, direction_code=1 on right/bottom */}
+      <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6">
+        <DirectionColumn
+          departures={direction2}
+          groupedDepartures={groupedDirection2}
+        />
+        <DirectionColumn
+          departures={direction1}
+          groupedDepartures={groupedDirection1}
+        />
+      </div>
     </div>
   );
 }; 
