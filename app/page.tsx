@@ -7,6 +7,7 @@ import { TransportTypeFilter } from '@/components/departures/TransportTypeFilter
 import { DirectionFilter } from '@/components/departures/DirectionFilter';
 import { DisruptionAlert } from '@/components/departures/DisruptionAlert';
 import { RefreshTimer } from '@/components/common/RefreshTimer';
+import { CurrentTimeCard } from '@/components/common/CurrentTimeCard';
 import { useDepartures } from '@/hooks/useDepartures';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
@@ -35,6 +36,8 @@ export default function Home() {
       </div>
 
       <DisruptionAlert departures={departures} disruptions={disruptions} />
+
+      <CurrentTimeCard />
 
       <div className="bg-dark-bg-secondary rounded-lg shadow-md p-4 mb-6 border border-dark-border">
         <div className="mb-4">

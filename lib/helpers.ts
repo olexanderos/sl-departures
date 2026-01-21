@@ -92,4 +92,14 @@ export const groupByDirectionCode = (departures: Departure[]): {
     }
     return acc;
   }, { direction1: [] as Departure[], direction2: [] as Departure[] });
+};
+
+/**
+ * Formats the current time as HH:MM with zero-padding
+ */
+export const formatCurrentTime = (date: Date): string => {
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  
+  return `${hours}:${minutes}`;
 }; 
