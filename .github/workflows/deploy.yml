@@ -38,7 +38,8 @@ jobs:
         run: npm run build:static
         env:
           NEXT_PUBLIC_BASE_PATH: /sl-departures
-          NEXT_PUBLIC_DEPARTURES_API: https://transport.integration.sl.se/v1/sites/9104/departures
+          NEXT_PUBLIC_API_BASE_URL: https://transport.integration.sl.se/v1
+          NEXT_PUBLIC_SITE_ID: 9104
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

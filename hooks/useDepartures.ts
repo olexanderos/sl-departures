@@ -4,11 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useState } from 'react';
 import { ApiResponse, Departure, SortConfig, TransportMode } from '@/lib/types';
-import { API_ENDPOINTS, REFRESH_INTERVAL } from '@/lib/constants';
+import { DEPARTURES_URL, REFRESH_INTERVAL } from '@/lib/constants';
 import { filterByDirection, filterByTransportMode, sortDepartures } from '@/lib/helpers';
 
 const fetchDepartures = async (): Promise<ApiResponse> => {
-  const { data } = await axios.get<ApiResponse>(API_ENDPOINTS.DEPARTURES);
+  const { data } = await axios.get<ApiResponse>(DEPARTURES_URL);
   return data;
 };
 
@@ -17,7 +17,7 @@ export const useDepartures = () => {
     option: 'time',
     direction: 'asc',
   });
-  
+
   const [transportFilter, setTransportFilter] = useState<TransportMode | undefined>(undefined);
   const [directionFilter, setDirectionFilter] = useState<string | undefined>(undefined);
 
@@ -38,13 +38,13 @@ export const useDepartures = () => {
   // Filter and sort departures
   const processedDepartures: Departure[] = (() => {
     if (!data?.departures) return [];
-    
+
     let filtered = data.departures;
-    
+
     // Apply filters
     filtered = filterByTransportMode(filtered, transportFilter);
     filtered = filterByDirection(filtered, directionFilter);
-    
+
     // Apply sorting
     return sortDepartures(filtered, sortConfig);
   })();

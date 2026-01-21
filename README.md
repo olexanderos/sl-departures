@@ -146,10 +146,29 @@ interface ApiResponse {
 4. Ensure accessibility compliance
 5. Add unit tests for critical components
 
+## Environment Variables
+Create a `.env.local` file in the root directory with the following variables:
+
+```bash
+# SL Transport API Configuration
+NEXT_PUBLIC_API_BASE_URL=https://transport.integration.sl.se/v1
+NEXT_PUBLIC_SITE_ID=9104
+
+# GitHub Pages base path (only for deployment)
+NEXT_PUBLIC_BASE_PATH=
+```
+
+- `NEXT_PUBLIC_API_BASE_URL`: Base URL for the SL transport API (default: `https://transport.integration.sl.se/v1`)
+- `NEXT_PUBLIC_SITE_ID`: Station/site ID for departures (default: `9104`)
+- `NEXT_PUBLIC_BASE_PATH`: Base path for GitHub Pages deployment (e.g., `/departures`)
+
 ## Deployment Strategy
 1. Build a fully static bundle with `npm run build:static`
 2. Deploy `out/` to GitHub Pages via `.github/workflows/deploy.yml`
-3. Provide `NEXT_PUBLIC_BASE_PATH` (e.g. `/sl-departures`) and `NEXT_PUBLIC_DEPARTURES_API` during builds (copy `.env.example` if needed)
+3. Configure environment variables in GitHub repository settings:
+   - `NEXT_PUBLIC_API_BASE_URL` (optional, uses default if not set)
+   - `NEXT_PUBLIC_SITE_ID` (optional, uses default if not set)
+   - `NEXT_PUBLIC_BASE_PATH` (required for GitHub Pages subdirectory)
 4. Use GitHub Pages environments for preview + production URLs
 
 ## Future Enhancements
