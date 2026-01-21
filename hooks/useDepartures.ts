@@ -3,9 +3,10 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useState } from 'react';
-import { ApiResponse, Departure, SortConfig, TransportMode } from '@/lib/types';
+import { ApiResponse, Departure, SortConfig } from '@/lib/types';
 import { DEPARTURES_URL, REFRESH_INTERVAL } from '@/lib/constants';
 import { filterByDirection, filterByTransportMode, sortDepartures } from '@/lib/helpers';
+import { useFilterContext } from '@/context/FilterContext';
 
 const fetchDepartures = async (): Promise<ApiResponse> => {
   const { data } = await axios.get<ApiResponse>(DEPARTURES_URL);
@@ -13,13 +14,19 @@ const fetchDepartures = async (): Promise<ApiResponse> => {
 };
 
 export const useDepartures = () => {
+  const { 
+    transportFilter, 
+    setTransportFilter, 
+    directionFilter, 
+    setDirectionFilter,
+    isFilterCollapsed,
+    setIsFilterCollapsed,
+  } = useFilterContext();
+
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     option: 'time',
     direction: 'asc',
   });
-
-  const [transportFilter, setTransportFilter] = useState<TransportMode | undefined>(undefined);
-  const [directionFilter, setDirectionFilter] = useState<string | undefined>(undefined);
 
   // Fetch departures with React Query, which handles caching and refetching
   const {
@@ -84,5 +91,7 @@ export const useDepartures = () => {
     setTransportFilter,
     directionFilter,
     setDirectionFilter,
+    isFilterCollapsed,
+    setIsFilterCollapsed,
   };
 }; 

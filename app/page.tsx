@@ -8,6 +8,7 @@ import { DirectionFilter } from '@/components/departures/DirectionFilter';
 import { DisruptionAlert } from '@/components/departures/DisruptionAlert';
 import { RefreshTimer } from '@/components/common/RefreshTimer';
 import { CurrentTimeCard } from '@/components/common/CurrentTimeCard';
+import { CollapsibleFilterPanel } from '@/components/departures/CollapsibleFilterPanel';
 import { useDepartures } from '@/hooks/useDepartures';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
@@ -24,7 +25,20 @@ export default function Home() {
     setTransportFilter,
     directionFilter,
     setDirectionFilter,
+    isFilterCollapsed,
+    setIsFilterCollapsed,
   } = useDepartures();
+
+  // Build list of active filter names
+  const activeFilters: string[] = [];
+  if (transportFilter) {
+    // Capitalize first letter and lowercase rest (e.g., "METRO" -> "Metro")
+    const filterName = transportFilter.charAt(0) + transportFilter.slice(1).toLowerCase();
+    activeFilters.push(filterName);
+  }
+  if (directionFilter) {
+    activeFilters.push(directionFilter);
+  }
 
   return (
     <PageContainer>
@@ -39,20 +53,25 @@ export default function Home() {
 
       <CurrentTimeCard />
 
-      <div className="bg-dark-bg-secondary rounded-lg shadow-md p-4 mb-6 border border-dark-border">
+      <CollapsibleFilterPanel
+        isCollapsed={isFilterCollapsed}
+        onToggle={() => setIsFilterCollapsed(!isFilterCollapsed)}
+        activeFilters={activeFilters}
+      >
         <div className="mb-4">
-          <h3 className="text-lg font-medium text-dark-text-primary mb-3">Filters</h3>
           <TransportTypeFilter 
             selected={transportFilter} 
             onChange={setTransportFilter} 
           />
-          <DirectionFilter 
-            departures={departures} 
-            selected={directionFilter} 
-            onChange={setDirectionFilter} 
-          />
         </div>
-        
+        <DirectionFilter 
+          departures={departures} 
+          selected={directionFilter} 
+          onChange={setDirectionFilter} 
+        />
+      </CollapsibleFilterPanel>
+
+      <div className="bg-dark-bg-secondary rounded-lg shadow-md p-4 mb-6 border border-dark-border">
         <RefreshTimer onRefresh={refetch} />
       </div>
 
