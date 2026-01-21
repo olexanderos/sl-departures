@@ -6,7 +6,6 @@ import { DepartureList } from '@/components/departures/DepartureList';
 import { TransportTypeFilter } from '@/components/departures/TransportTypeFilter';
 import { DirectionFilter } from '@/components/departures/DirectionFilter';
 import { DisruptionAlert } from '@/components/departures/DisruptionAlert';
-import { RefreshTimer } from '@/components/common/RefreshTimer';
 import { CurrentTimeCard } from '@/components/common/CurrentTimeCard';
 import { CollapsibleFilterPanel } from '@/components/departures/CollapsibleFilterPanel';
 import { useDepartures } from '@/hooks/useDepartures';
@@ -18,7 +17,6 @@ export default function Home() {
     disruptions,
     isLoading,
     isError,
-    refetch,
     sortConfig,
     handleSort,
     transportFilter,
@@ -59,21 +57,17 @@ export default function Home() {
         activeFilters={activeFilters}
       >
         <div className="mb-4">
-          <TransportTypeFilter 
-            selected={transportFilter} 
-            onChange={setTransportFilter} 
+          <TransportTypeFilter
+            selected={transportFilter}
+            onChange={setTransportFilter}
           />
         </div>
-        <DirectionFilter 
-          departures={departures} 
-          selected={directionFilter} 
-          onChange={setDirectionFilter} 
+        <DirectionFilter
+          departures={departures}
+          selected={directionFilter}
+          onChange={setDirectionFilter}
         />
       </CollapsibleFilterPanel>
-
-      <div className="bg-dark-bg-secondary rounded-lg shadow-md p-4 mb-6 border border-dark-border">
-        <RefreshTimer onRefresh={refetch} />
-      </div>
 
       <ErrorBoundary>
         <DepartureList

@@ -21,8 +21,7 @@ departures/
 ├── components/
 │   ├── common/              # Reusable UI components
 │   │   ├── ErrorBoundary.tsx
-│   │   ├── LoadingSpinner.tsx
-│   │   └── RefreshTimer.tsx
+│   │   └── LoadingSpinner.tsx
 │   ├── departures/          # Departure-specific components
 │   │   ├── DepartureCard.tsx
 │   │   ├── DepartureList.tsx
@@ -40,8 +39,7 @@ departures/
 │   ├── helpers.ts           # Helper functions 
 │   └── types.ts             # TypeScript interfaces
 ├── hooks/
-│   ├── useDepartures.ts     # Custom hook for departures data
-│   └── useRefreshTimer.ts   # Custom hook for refresh logic
+│   └── useDepartures.ts     # Custom hook for departures data
 ├── context/
 │   └── FilterContext.tsx    # Context for filter state
 ├── styles/
@@ -127,7 +125,7 @@ interface ApiResponse {
 ### Phase 2: Data Fetching
 1. Connect to the SL departures endpoint with React Query
 2. Create useDepartures hook with React Query
-3. Implement auto-refresh functionality (useRefreshTimer hook)
+3. Implement auto-refresh functionality with React Query
 4. Add error handling for API failures
 
 ### Phase 3: UI Components
