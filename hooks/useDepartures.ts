@@ -2,8 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useState } from 'react';
-import { ApiResponse, Departure, SortConfig } from '@/lib/types';
+import { ApiResponse, Departure } from '@/lib/types';
 import { DEPARTURES_URL, REFRESH_INTERVAL } from '@/lib/constants';
 import { filterByDirection, filterByTransportMode, sortDepartures } from '@/lib/helpers';
 import { useFilterContext } from '@/context/FilterContext';
@@ -23,11 +22,6 @@ export const useDepartures = () => {
     setIsFilterCollapsed,
   } = useFilterContext();
 
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    option: 'time',
-    direction: 'asc',
-  });
-
   // Fetch departures with React Query, which handles caching and refetching
   const {
     data,
@@ -42,7 +36,7 @@ export const useDepartures = () => {
     refetchOnWindowFocus: true,
   });
 
-  // Filter and sort departures
+  // Filter and sort departures (always sort by time ascending)
   const processedDepartures: Departure[] = (() => {
     if (!data?.departures) return [];
 
@@ -52,28 +46,9 @@ export const useDepartures = () => {
     filtered = filterByTransportMode(filtered, transportFilter);
     filtered = filterByDirection(filtered, directionFilter);
 
-    // Apply sorting
-    return sortDepartures(filtered, sortConfig);
+    // Always sort by time ascending (earliest to latest)
+    return sortDepartures(filtered, { option: 'time', direction: 'asc' });
   })();
-
-  // Toggle sort direction or change sort option
-  const handleSort = (option: SortConfig['option']) => {
-    setSortConfig(prev => {
-      if (prev.option === option) {
-        // Toggle direction if same option clicked
-        return {
-          ...prev,
-          direction: prev.direction === 'asc' ? 'desc' : 'asc',
-        };
-      } else {
-        // New option selected, start with ascending
-        return {
-          option,
-          direction: 'asc',
-        };
-      }
-    });
-  };
 
   // Get disruptions
   const disruptions = data?.stop_deviations || [];
@@ -89,8 +64,6 @@ export const useDepartures = () => {
     isError,
     error,
     refetch,
-    sortConfig,
-    handleSort,
     transportFilter,
     setTransportFilter,
     directionFilter,

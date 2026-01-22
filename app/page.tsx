@@ -18,8 +18,6 @@ export default function Home() {
     disruptions,
     isLoading,
     isError,
-    sortConfig,
-    handleSort,
     transportFilter,
     setTransportFilter,
     directionFilter,
@@ -73,8 +71,6 @@ export default function Home() {
           departures={departures}
           isLoading={isLoading}
           isError={isError}
-          sortConfig={sortConfig}
-          onSort={handleSort}
         />
       </ErrorBoundary>
     </PageContainer>

@@ -26,9 +26,7 @@ export const CurrentTimeCard: React.FC = () => {
   // Don't render until client-side hydration is complete
   if (!currentTime) {
     return (
-      <div
-        className="bg-dark-bg-secondary rounded-lg shadow-md p-6 sm:p-8 mb-6 border border-dark-border"
-      >
+      <div className="py-2 mb-2">
         <div className="text-center">
           <p className="text-sm text-dark-text-secondary mb-2">Now:</p>
           <div className="text-5xl sm:text-6xl font-bold text-dark-text-primary">
@@ -44,7 +42,7 @@ export const CurrentTimeCard: React.FC = () => {
 
   return (
     <div
-      className="bg-dark-bg-secondary rounded-lg shadow-md p-6 sm:p-8 mb-6 border border-dark-border"
+      className="py-2 mb-2"
       role="timer"
       aria-live="polite"
       aria-label="Current time"
