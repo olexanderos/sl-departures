@@ -37,16 +37,17 @@ export default function Home() {
 
   return (
     <PageContainer>
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-dark-text-primary mb-2">Live Departures</h2>
-        <p className="text-dark-text-secondary">
-          Real-time departures from Råcksta station
-        </p>
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-dark-text-primary mb-2">Live Departures</h2>
+          <p className="text-dark-text-secondary">
+            Real-time departures from Råcksta station
+          </p>
+        </div>
+        <CurrentTimeCard />
       </div>
 
       <DisruptionAlert departures={departures} disruptions={disruptions} />
-
-      <CurrentTimeCard />
 
       <TransportTypeFilter
         departures={rawDepartures}
