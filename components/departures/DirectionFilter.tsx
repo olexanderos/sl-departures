@@ -35,36 +35,31 @@ export const DirectionFilter: React.FC<DirectionFilterProps> = ({
   }
 
   return (
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-dark-text-primary mb-2">
-        Direction
-      </label>
-      <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2">
+      <button
+        onClick={() => onChange(undefined)}
+        className={`px-3 py-1 text-sm rounded-full ${
+          selected === undefined
+            ? 'bg-primary text-white'
+            : 'bg-dark-bg-secondary text-dark-text-secondary'
+        }`}
+      >
+        All
+      </button>
+      
+      {directions.map(direction => (
         <button
-          onClick={() => onChange(undefined)}
+          key={direction}
+          onClick={() => onChange(direction)}
           className={`px-3 py-1 text-sm rounded-full ${
-            selected === undefined
+            selected === direction
               ? 'bg-primary text-white'
               : 'bg-dark-bg-secondary text-dark-text-secondary'
           }`}
         >
-          All
+          {direction}
         </button>
-        
-        {directions.map(direction => (
-          <button
-            key={direction}
-            onClick={() => onChange(direction)}
-            className={`px-3 py-1 text-sm rounded-full ${
-              selected === direction
-                ? 'bg-primary text-white'
-                : 'bg-dark-bg-secondary text-dark-text-secondary'
-            }`}
-          >
-            {direction}
-          </button>
-        ))}
-      </div>
+      ))}
     </div>
   );
 }; 

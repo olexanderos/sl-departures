@@ -26,17 +26,17 @@ export const CollapsibleFilterPanel: React.FC<CollapsibleFilterPanelProps> = ({
         className="w-full flex items-center justify-between p-4 text-left hover:bg-dark-bg-primary transition-colors rounded-t-lg"
         aria-expanded={!isCollapsed}
         aria-controls="filter-panel-content"
-        aria-label={isCollapsed ? 'Expand filters' : 'Collapse filters'}
+        aria-label={isCollapsed ? 'Expand direction filter' : 'Collapse direction filter'}
       >
         <div className="flex items-center gap-3 flex-wrap">
-          <h3 className="text-lg font-medium text-dark-text-primary">Filters</h3>
+          <h3 className="text-lg font-medium text-dark-text-primary">Direction</h3>
           {isCollapsed && activeFilters.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
               {activeFilters.map((filter, index) => (
                 <span 
                   key={index}
                   className="px-2 py-1 text-xs font-semibold rounded-full bg-primary text-white"
-                  aria-label={`Active filter: ${filter}`}
+                  aria-label={`Active direction: ${filter}`}
                 >
                   {filter}
                 </span>

@@ -45,18 +45,34 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
   
   const [transportFilter, setTransportFilter] = useState<TransportMode | undefined>(TRANSPORT_MODES.METRO);
   const [directionFilter, setDirectionFilter] = useState<string | undefined>(undefined);
-  const [isFilterCollapsed, setIsFilterCollapsedState] = useState<boolean>(false);
-
-  // Initialize collapse state based on viewport and localStorage
-  useEffect(() => {
-    const isDesktop = window.innerWidth >= DESKTOP_BREAKPOINT;
-    const savedState = localStorage.getItem(STORAGE_KEY);
+  
+  // Initialize collapsed state - default to true for desktop/kiosk mode
+  const [isFilterCollapsed, setIsFilterCollapsedState] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true; // SSR default
     
+    const savedState = localStorage.getItem(STORAGE_KEY);
     if (savedState !== null) {
-      setIsFilterCollapsedState(savedState === 'true');
-    } else {
-      setIsFilterCollapsedState(isDesktop);
+      return savedState === 'true';
     }
+    
+    // Default to collapsed on desktop/kiosk (>= 768px)
+    return window.innerWidth >= DESKTOP_BREAKPOINT;
+  });
+
+  // Update collapse state on viewport changes
+  useEffect(() => {
+    const handleResize = () => {
+      const isDesktop = window.innerWidth >= DESKTOP_BREAKPOINT;
+      const savedState = localStorage.getItem(STORAGE_KEY);
+      
+      // Only auto-adjust if user hasn't manually set a preference
+      if (savedState === null) {
+        setIsFilterCollapsedState(isDesktop);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Persist collapse state to localStorage

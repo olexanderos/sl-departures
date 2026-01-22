@@ -14,10 +14,10 @@ const fetchDepartures = async (): Promise<ApiResponse> => {
 };
 
 export const useDepartures = () => {
-  const { 
-    transportFilter, 
-    setTransportFilter, 
-    directionFilter, 
+  const {
+    transportFilter,
+    setTransportFilter,
+    directionFilter,
     setDirectionFilter,
     isFilterCollapsed,
     setIsFilterCollapsed,
@@ -78,8 +78,12 @@ export const useDepartures = () => {
   // Get disruptions
   const disruptions = data?.stop_deviations || [];
 
+  // Get raw departures for filter components (unfiltered)
+  const rawDepartures = data?.departures || [];
+
   return {
     departures: processedDepartures,
+    rawDepartures,
     disruptions,
     isLoading,
     isError,

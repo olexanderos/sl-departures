@@ -14,6 +14,7 @@ import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 export default function Home() {
   const {
     departures,
+    rawDepartures,
     disruptions,
     isLoading,
     isError,
@@ -27,15 +28,13 @@ export default function Home() {
     setIsFilterCollapsed,
   } = useDepartures();
 
-  // Build list of active filter names
+  // Build list of active filter names (only direction now, transport is always visible)
   const activeFilters: string[] = [];
-  if (transportFilter) {
-    // Capitalize first letter and lowercase rest (e.g., "METRO" -> "Metro")
-    const filterName = transportFilter.charAt(0) + transportFilter.slice(1).toLowerCase();
-    activeFilters.push(filterName);
-  }
   if (directionFilter) {
     activeFilters.push(directionFilter);
+  } else {
+    // Show "All" when no specific direction is selected
+    activeFilters.push('All');
   }
 
   return (
@@ -51,19 +50,19 @@ export default function Home() {
 
       <CurrentTimeCard />
 
+      <TransportTypeFilter
+        departures={rawDepartures}
+        selected={transportFilter}
+        onChange={setTransportFilter}
+      />
+
       <CollapsibleFilterPanel
         isCollapsed={isFilterCollapsed}
         onToggle={() => setIsFilterCollapsed(!isFilterCollapsed)}
         activeFilters={activeFilters}
       >
-        <div className="mb-4">
-          <TransportTypeFilter
-            selected={transportFilter}
-            onChange={setTransportFilter}
-          />
-        </div>
         <DirectionFilter
-          departures={departures}
+          departures={rawDepartures}
           selected={directionFilter}
           onChange={setDirectionFilter}
         />
