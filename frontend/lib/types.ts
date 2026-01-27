@@ -50,4 +50,56 @@ export type SortOption = 'time' | 'line' | 'transport';
 export interface SortConfig {
   option: SortOption;
   direction: 'asc' | 'desc';
+}
+
+// Weather Types
+
+/**
+ * Current weather data from the weather API
+ */
+export interface CurrentWeather {
+  temperature: number;
+  feelsLike: number;
+  humidity: number;
+  description: string;
+  icon: string;
+  windSpeed: number;
+  pressure: number;
+  clouds: number;
+  sunrise: string;
+  sunset: string;
+  location: string;
+  timestamp: string;
+}
+
+/**
+ * Single hour forecast item
+ */
+export interface HourlyForecastItem {
+  time: string;
+  temperature: number;
+  feelsLike: number;
+  description: string;
+  icon: string;
+  precipitation: number;
+  humidity: number;
+  windSpeed: number;
+}
+
+/**
+ * Hourly forecast response from the weather API
+ */
+export interface HourlyForecast {
+  location: string;
+  hours: HourlyForecastItem[];
+  timestamp: string;
+}
+
+/**
+ * Weather API error response
+ */
+export interface WeatherApiError {
+  error: string;
+  message: string;
+  statusCode: number;
 } 

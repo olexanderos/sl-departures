@@ -39,4 +39,21 @@ export const API_CONFIG = {
 /**
  * Full URL for the departures API endpoint
  */
-export const DEPARTURES_URL = `${API_CONFIG.BASE_URL}/sites/${API_CONFIG.SITE_ID}/departures`; 
+export const DEPARTURES_URL = `${API_CONFIG.BASE_URL}/sites/${API_CONFIG.SITE_ID}/departures`;
+
+// Weather API Configuration
+const DEFAULT_WEATHER_API_URL = 'http://localhost:3001';
+
+export const WEATHER_API_CONFIG = {
+  BASE_URL: process.env.NEXT_PUBLIC_WEATHER_API_URL || DEFAULT_WEATHER_API_URL,
+};
+
+export const WEATHER_REFRESH_INTERVAL = 15 * 60 * 1000; // 15 minutes in milliseconds
+
+/**
+ * Weather API endpoints
+ */
+export const WEATHER_ENDPOINTS = {
+  CURRENT: `${WEATHER_API_CONFIG.BASE_URL}/api/weather/current`,
+  FORECAST: `${WEATHER_API_CONFIG.BASE_URL}/api/weather/forecast`,
+}; 
