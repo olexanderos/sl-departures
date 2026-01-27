@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  weather-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: departures-weather-api
+    ports:
+      - "3001:3001"
+    environment:
+      - OPENWEATHERMAP_API_KEY=${OPENWEATHERMAP_API_KEY}
+      - WEATHER_LAT=${WEATHER_LAT:-59.3293}
+      - WEATHER_LON=${WEATHER_LON:-18.0686}
+      - CACHE_TTL_MINUTES=${CACHE_TTL_MINUTES:-15}
+      - PORT=3001
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Resource limits for Raspberry Pi
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+
+networks:
+  default:
+    name: departures-network

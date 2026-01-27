@@ -1,0 +1,33 @@
+{
+  "name": "@departures/weather-api",
+  "version": "0.1.0",
+  "tasks": {
+    "dev": "deno run --allow-net --allow-env --allow-read --watch src/main.ts",
+    "build": "deno compile --allow-net --allow-env --allow-read --output dist/server src/main.ts",
+    "start": "deno run --allow-net --allow-env --allow-read src/main.ts",
+    "check": "deno check src/main.ts",
+    "lint": "deno lint",
+    "fmt": "deno fmt"
+  },
+  "imports": {
+    "hono": "npm:hono@^4.0.0",
+    "zod": "npm:zod@^3.22.0",
+    "@hono/zod-validator": "npm:@hono/zod-validator@^0.2.0"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true
+  },
+  "fmt": {
+    "indentWidth": 2,
+    "singleQuote": true
+  },
+  "lint": {
+    "rules": {
+      "tags": [
+        "recommended"
+      ]
+    }
+  }
+}

@@ -1,58 +1,66 @@
 # Departures - Transport Information Web App
 
 ## Project Overview
-A modern single-page web application to display train and bus departures and potential disruptions. The app fetches real-time data from the SL transport API and refreshes it every minute.
+A modern single-page web application to display train and bus departures, potential disruptions, and weather information. The app fetches real-time data from the SL transport API and a custom weather backend, refreshing automatically.
 
 ## Technical Stack
+
+### Frontend
 - **Framework**: Next.js (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **State Management**: React Query for server state + Context API for app state
-- **API Communication**: REST calls directly to the SL public transport API
+- **API Communication**: REST calls to SL public transport API and Weather API
+
+### Backend (Weather API)
+- **Runtime**: Deno 2.x
+- **Framework**: Hono
+- **Validation**: Zod
+- **Deployment**: Docker + Docker Compose
+- **Data Source**: OpenWeatherMap API
 
 ## Project Structure
 ```
 departures/
-├── app/
-│   ├── favicon.ico
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx             # Main page component
-├── components/
-│   ├── common/              # Reusable UI components
-│   │   ├── ErrorBoundary.tsx
-│   │   └── LoadingSpinner.tsx
-│   ├── departures/          # Departure-specific components
-│   │   ├── DepartureCard.tsx
-│   │   ├── DepartureList.tsx
-│   │   ├── DirectionFilter.tsx
-│   │   ├── DisruptionAlert.tsx
-│   │   ├── SearchBar.tsx
-│   │   ├── TransportIcon.tsx
-│   │   └── TransportTypeFilter.tsx
-│   └── layout/              # Layout components
-│       ├── Footer.tsx
-│       ├── Header.tsx
-│       └── PageContainer.tsx
-├── lib/
-│   ├── constants.ts         # App constants
-│   ├── helpers.ts           # Helper functions 
-│   └── types.ts             # TypeScript interfaces
-├── hooks/
-│   └── useDepartures.ts     # Custom hook for departures data
-├── context/
-│   └── FilterContext.tsx    # Context for filter state
-├── styles/
-│   └── tailwind.css         # Custom Tailwind styles
-├── public/
-│   └── icons/               # Transport icons
+├── frontend/                 # Next.js frontend application
+│   ├── app/
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components/
+│   │   ├── common/
+│   │   ├── departures/
+│   │   ├── layout/
+│   │   └── weather/          # Weather display components
+│   ├── hooks/
+│   │   ├── useDepartures.ts
+│   │   └── useWeather.ts     # Weather data hooks
+│   ├── lib/
+│   │   ├── constants.ts
+│   │   ├── helpers.ts
+│   │   └── types.ts
+│   └── context/
+├── backend/                  # Deno + Hono weather API
+│   ├── src/
+│   │   ├── main.ts           # Entry point
+│   │   ├── lib/
+│   │   │   ├── cache.ts      # In-memory TTL cache
+│   │   │   └── env.ts        # Environment validation
+│   │   ├── routes/
+│   │   │   ├── health.ts
+│   │   │   └── weather.ts
+│   │   ├── schemas/
+│   │   │   └── weather.ts    # Zod schemas
+│   │   └── services/
+│   │       └── openweathermap.ts
+│   ├── deno.json
+│   ├── Dockerfile
+│   └── README.md
+├── docker-compose.yml        # Docker Compose for backend
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml       # GitHub Pages pipeline
-├── next.config.js
-├── package.json
-├── tailwind.config.js
-└── tsconfig.json
+│       └── deploy.yml
+└── README.md
 ```
 
 ## Core Features
@@ -61,16 +69,22 @@ departures/
    - Show "minutes until departure" or "Now" for imminent departures
    - Visual differentiation between transport types (metro, bus, etc.)
 
-2. **Auto-Refresh Functionality**
-   - Refresh data automatically every 60 seconds
+2. **Weather Information**
+   - Current weather with temperature, conditions, and details
+   - Hourly forecast for the next 24 hours
+   - Auto-refresh every 15 minutes with in-memory caching
 
-3. **Sorting**
+3. **Auto-Refresh Functionality**
+   - Departures refresh automatically every 60 seconds
+   - Weather data refresh every 15 minutes
+
+4. **Sorting**
    - Sort by transport type (metro, bus), direction, departure time
 
-4. **Disruption Alerts**
+5. **Disruption Alerts**
    - Prominent display of any service disruptions
 
-5. **Responsive Design**
+6. **Responsive Design**
    - Mobile-first approach
    - Accessible interface
 
@@ -145,20 +159,77 @@ interface ApiResponse {
 5. Add unit tests for critical components
 
 ## Environment Variables
-Create a `.env.local` file in the root directory with the following variables:
 
+### Frontend (frontend/.env.local)
 ```bash
 # SL Transport API Configuration
 NEXT_PUBLIC_API_BASE_URL=https://transport.integration.sl.se/v1
 NEXT_PUBLIC_SITE_ID=9104
 
+# Weather API Configuration
+NEXT_PUBLIC_WEATHER_API_URL=http://localhost:3001
+
 # GitHub Pages base path (only for deployment)
 NEXT_PUBLIC_BASE_PATH=
 ```
 
-- `NEXT_PUBLIC_API_BASE_URL`: Base URL for the SL transport API (default: `https://transport.integration.sl.se/v1`)
-- `NEXT_PUBLIC_SITE_ID`: Station/site ID for departures (default: `9104`)
-- `NEXT_PUBLIC_BASE_PATH`: Base path for GitHub Pages deployment (e.g., `/departures`)
+### Backend (.env)
+```bash
+# Required: OpenWeatherMap API key
+OPENWEATHERMAP_API_KEY=your_api_key_here
+
+# Location (default: Stockholm)
+WEATHER_LAT=59.3293
+WEATHER_LON=18.0686
+
+# Cache TTL in minutes (default: 15)
+CACHE_TTL_MINUTES=15
+
+# Server port (default: 3001)
+PORT=3001
+```
+
+## Running the Application
+
+### Backend (Weather API)
+
+**Option 1: With Deno (Development)**
+```bash
+cd backend
+
+# Set environment variable
+export OPENWEATHERMAP_API_KEY=your_api_key
+
+# Run with watch mode
+deno task dev
+```
+
+**Option 2: With Docker Compose (Production)**
+```bash
+# Create .env file in project root
+echo "OPENWEATHERMAP_API_KEY=your_api_key" > .env
+
+# Start the service
+docker compose up -d
+
+# View logs
+docker compose logs -f weather-api
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Getting an OpenWeatherMap API Key
+
+1. Sign up at [OpenWeatherMap](https://openweathermap.org/api)
+2. Navigate to your API keys page
+3. Generate a new API key (free tier includes 1000 calls/day)
+4. Add it to your environment configuration
 
 ## Deployment Strategy
 1. Build a fully static bundle with `npm run build:static`

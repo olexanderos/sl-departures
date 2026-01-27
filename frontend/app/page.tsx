@@ -8,6 +8,7 @@ import { DirectionFilter } from '@/components/departures/DirectionFilter';
 import { DisruptionAlert } from '@/components/departures/DisruptionAlert';
 import { CurrentTimeCard } from '@/components/common/CurrentTimeCard';
 import { CollapsibleFilterPanel } from '@/components/departures/CollapsibleFilterPanel';
+import { WeatherSection } from '@/components/weather';
 import { useDepartures } from '@/hooks/useDepartures';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
@@ -45,6 +46,11 @@ export default function Home() {
           </p>
         </div>
         <CurrentTimeCard />
+      </div>
+
+      {/* Weather Section */}
+      <div className="mb-6">
+        <WeatherSection />
       </div>
 
       <DisruptionAlert departures={departures} disruptions={disruptions} />
