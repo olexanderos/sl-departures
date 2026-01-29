@@ -1,0 +1,136 @@
+version: "3"
+
+vars:
+  DOCKER_USERNAME: '{{.DOCKER_USERNAME | default ""}}'
+  IMAGE_NAME: '{{.IMAGE_NAME | default "weather-api"}}'
+  IMAGE_TAG: '{{.IMAGE_TAG | default "latest"}}'
+  FULL_IMAGE: "{{.DOCKER_USERNAME}}/{{.IMAGE_NAME}}:{{.IMAGE_TAG}}"
+
+dotenv: [".env"]
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  # ============ Docker Build Tasks ============
+
+  echo:
+    desc: Echo the full image name
+    cmds:
+      - echo {{.FULL_IMAGE}}
+
+  build:
+    desc: Build Docker image
+    dir: backend
+    cmds:
+      - docker build -t {{.FULL_IMAGE}} .
+      - echo "✅ Built {{.FULL_IMAGE}}"
+
+  push:
+    desc: Push Docker image to Docker Hub
+    preconditions:
+      - sh: '[ -n "{{.DOCKER_USERNAME}}" ] && [ "{{.DOCKER_USERNAME}}" != "your-dockerhub-username" ]'
+        msg: "Set DOCKER_USERNAME in .env or pass it: task push DOCKER_USERNAME=yourusername"
+    cmds:
+      - docker push {{.FULL_IMAGE}}
+      - echo "✅ Pushed {{.FULL_IMAGE}}"
+
+  build-push:
+    desc: Build and push Docker image to Docker Hub
+    dir: backend
+    preconditions:
+      - sh: '[ -n "{{.DOCKER_USERNAME}}" ] && [ "{{.DOCKER_USERNAME}}" != "your-dockerhub-username" ]'
+        msg: "Set DOCKER_USERNAME in .env or pass it: task build-push DOCKER_USERNAME=yourusername"
+    cmds:
+      - docker build -t {{.FULL_IMAGE}} .
+      - docker push {{.FULL_IMAGE}}
+      - echo "✅ Built and pushed {{.FULL_IMAGE}}"
+
+  login:
+    desc: Login to Docker Hub
+    cmds:
+      - docker login {{.DOCKER_REGISTRY}}
+
+  # ============ Local Development Tasks ============
+
+  dev:
+    desc: Run backend locally with Deno (watch mode)
+    dir: backend
+    dotenv: ["../.env", ".env"]
+    cmds:
+      - deno task dev
+
+  run:
+    desc: Run backend locally with Docker
+    deps: [build]
+    cmds:
+      - |
+        docker run --rm -it \
+          -p 3001:3001 \
+          -e OPENWEATHERMAP_API_KEY=${OPENWEATHERMAP_API_KEY} \
+          -e WEATHER_LAT=${WEATHER_LAT:-59.3293} \
+          -e WEATHER_LON=${WEATHER_LON:-18.0686} \
+          {{.FULL_IMAGE}}
+
+  # ============ Deployment Tasks ============
+
+  deploy:
+    desc: Deploy to Raspberry Pi (requires PI_HOST env var)
+    preconditions:
+      - sh: '[ -n "{{.PI_HOST}}" ]'
+        msg: "Set PI_HOST in .env or pass it: task deploy PI_HOST=pi@192.168.1.100"
+    cmds:
+      - echo "📦 Deploying to {{.PI_HOST}}..."
+      - |
+        ssh {{.PI_HOST}} "mkdir -p ~/departures && cd ~/departures && \
+          echo 'OPENWEATHERMAP_API_KEY=${OPENWEATHERMAP_API_KEY}' > .env && \
+          echo 'WEATHER_LAT=${WEATHER_LAT:-59.3293}' >> .env && \
+          echo 'WEATHER_LON=${WEATHER_LON:-18.0686}' >> .env"
+      - |
+        cat <<EOF | ssh {{.PI_HOST}} "cat > ~/departures/docker-compose.yml"
+        services:
+          weather-api:
+            image: {{.FULL_IMAGE}}
+            ports:
+              - "3001:3001"
+            env_file: .env
+            restart: unless-stopped
+        EOF
+      - ssh {{.PI_HOST}} "cd ~/departures && docker compose pull && docker compose up -d"
+      - echo "✅ Deployed to {{.PI_HOST}}"
+
+  logs:
+    desc: View logs from Raspberry Pi deployment
+    preconditions:
+      - sh: '[ -n "{{.PI_HOST}}" ]'
+        msg: "Set PI_HOST in .env"
+    cmds:
+      - ssh {{.PI_HOST}} "cd ~/departures && docker compose logs -f"
+
+  # ============ Utility Tasks ============
+
+  clean:
+    desc: Remove local Docker images
+    cmds:
+      - docker rmi {{.FULL_IMAGE}} || true
+      - docker buildx prune -f
+
+  check:
+    desc: Type-check backend code
+    dir: backend
+    cmds:
+      - deno task check
+
+  lint:
+    desc: Lint backend code
+    dir: backend
+    cmds:
+      - deno task lint
+
+  fmt:
+    desc: Format backend code
+    dir: backend
+    cmds:
+      - deno task fmt
