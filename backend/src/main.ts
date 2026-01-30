@@ -17,16 +17,15 @@ const app = new Hono();
 app.use('*', logger());
 app.use('*', prettyJSON());
 
-// CORS configuration - allow requests from frontend
+// CORS configuration - origins controlled by CORS_ORIGINS env var
 app.use(
   '*',
   cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', '*'],
+    origin: env.CORS_ORIGINS,
     allowMethods: ['GET', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization'],
+    allowHeaders: ['Content-Type'],
     exposeHeaders: ['Content-Length'],
     maxAge: 86400,
-    credentials: true,
   })
 );
 

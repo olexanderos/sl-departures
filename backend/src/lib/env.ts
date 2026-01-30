@@ -17,6 +17,13 @@ const envSchema = z.object({
     .optional()
     .default('3001')
     .transform((val) => parseInt(val, 10)),
+  CORS_ORIGINS: z
+    .string()
+    .optional()
+    .default('*')
+    .transform((val): string | string[] => 
+      val === '*' ? '*' : val.split(',').map((o) => o.trim())
+    ),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -31,6 +38,7 @@ export function loadEnv(): Env {
     WEATHER_LON: Deno.env.get('WEATHER_LON') || '18.0686',
     CACHE_TTL_MINUTES: Deno.env.get('CACHE_TTL_MINUTES'),
     PORT: Deno.env.get('PORT'),
+    CORS_ORIGINS: Deno.env.get('CORS_ORIGINS'),
   });
 
   if (!result.success) {
